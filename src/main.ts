@@ -26,7 +26,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') ?? 'http://localhost:3000',
+    origin: process.env.ALLOWED_ORIGIN,
     credential: true,
     methods: ['GET', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -88,6 +88,7 @@ async function bootstrap() {
 
   await app.listen(port, () => {
     console.log(`Server listening on port: ${port}`);
+    console.log(`process.env.ALLOWED_ORIGIN: ${process.env.ALLOWED_ORIGIN}`);
   });
 }
 bootstrap().catch((error) => {

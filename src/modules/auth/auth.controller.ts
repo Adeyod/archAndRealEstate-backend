@@ -61,10 +61,11 @@ export class AuthController {
     description: 'Too many requests. Rate limit exceeded',
   })
   async registerUser(@Body() registerUserDto: RegisterUserDto) {
+    console.log('from frontend:', registerUserDto);
     return await this.authService.registerUser(registerUserDto);
   }
 
-  @Get('verify-email/:token')
+  @Get('email-verification/:token')
   @SuccessMessage('Email verification successful')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
