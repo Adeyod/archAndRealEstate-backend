@@ -25,11 +25,31 @@ async function bootstrap() {
   );
 
   // Enable CORS
+  // app.enableCors({
+  //   origin: process.env.ALLOWED_ORIGIN,
+  //   credentials: true,
+  //   methods: ['GET', 'DELETE', 'PATCH', 'OPTIONS'],
+  //   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  // });
+
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS?.split(',') || []).map(
+    (origin) => origin.trim(),
+  );
+
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGIN,
-    credential: true,
-    methods: ['GET', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Not allowed by CORS'), false);
+    },
+    credentials: true,
   });
 
   app.useGlobalInterceptors(new GlobalResponseInterceptor(app.get(Reflector)));
@@ -88,7 +108,6 @@ async function bootstrap() {
 
   await app.listen(port, () => {
     console.log(`Server listening on port: ${port}`);
-    console.log(`process.env.ALLOWED_ORIGIN: ${process.env.ALLOWED_ORIGIN}`);
   });
 }
 bootstrap().catch((error) => {

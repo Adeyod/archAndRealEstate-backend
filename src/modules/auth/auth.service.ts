@@ -42,7 +42,6 @@ export class AuthService {
       registerUserDto;
 
     const userExist = await this.usersRepository.findByEmail(email);
-    console.log('userExist:', userExist);
 
     if (userExist) {
       throw new ConflictException({
@@ -53,7 +52,6 @@ export class AuthService {
     }
 
     const hashed = await this.passwordHashing(password);
-    console.log('hashed:', hashed);
 
     const payload = {
       firstName,
@@ -64,7 +62,6 @@ export class AuthService {
     };
 
     const newUser = await this.usersRepository.create(payload);
-    console.log('newUser:', newUser);
 
     const token = generateCode(6);
     const input = {
@@ -75,7 +72,6 @@ export class AuthService {
     };
     const userToken = await this.tokensRepository.create(input);
 
-    console.log('userToken:', userToken);
     await this.mailService.sendVerificationEmail(
       newUser.email,
       newUser.firstName,
@@ -355,7 +351,6 @@ export class AuthService {
       .trim() as string;
     const refreshToken = req.headers['x-refresh-token'] as string;
 
-    console.log('logout user:', accessToken);
     const deleteRefreshToken =
       await this.refreshTokensService.deleteRefreshToken(
         refreshToken,
@@ -392,7 +387,6 @@ export class AuthService {
   }
 
   private async generateAccessTokens(email: string, id: Types.ObjectId) {
-    console.log('I want to generate access token');
     const payload = { sub: id, email };
 
     const accessToken = await this.jwtService.signAsync(payload, {
