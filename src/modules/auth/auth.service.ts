@@ -72,11 +72,11 @@ export class AuthService {
     };
     const userToken = await this.tokensRepository.create(input);
 
-    await this.mailService.sendVerificationEmail(
-      newUser.email,
-      newUser.firstName,
-      userToken.token,
-    );
+    // await this.mailService.sendVerificationEmail(
+    //   newUser.email,
+    //   newUser.firstName,
+    //   userToken.token,
+    // );
 
     return {
       data: null,
