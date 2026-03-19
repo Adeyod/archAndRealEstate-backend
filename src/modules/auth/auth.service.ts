@@ -139,6 +139,8 @@ export class AuthService {
       });
     }
 
+    console.log('user:', user);
+
     const hash = user?.password;
 
     if (!hash) {
@@ -190,7 +192,9 @@ export class AuthService {
         user.role,
         user._id,
       );
+      console.log('refreshToken:', refreshToken);
       const accessToken = await this.generateAccessTokens(user.email, user._id);
+      console.log('accessToken:', accessToken);
 
       return {
         refreshToken: refreshToken.refreshToken,
