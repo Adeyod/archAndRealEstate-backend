@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { GetAllUsersDto } from './dto/get-all-users.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { User } from './schemas/user.schema';
@@ -12,7 +13,8 @@ import { User } from './schemas/user.schema';
 @Injectable()
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
-  async findUserById(id: Types.ObjectId): Promise<UserResponseDto> {
+  async findUserById(userId: string): Promise<UserResponseDto> {
+    const id = new Types.ObjectId(userId);
     const user = await this.usersRepository.findById(id);
 
     if (!user) {
@@ -97,5 +99,13 @@ export class UsersService {
 
     const { password, ...others } = user;
     return others;
+  }
+
+  async findAllUsers(getAllUsersDto: GetAllUsersDto): Promise<{
+    userObj: UserResponseDto[];
+    totalPages: number;
+    totalCount: number;
+  }> {
+    return await this.usersRepository.findAll(getAllUsersDto);
   }
 }

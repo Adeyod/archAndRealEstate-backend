@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
-import { Types } from 'mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { RefreshTokensService } from 'src/modules/refresh-tokens/refresh-tokens.service';
 import { UsersService } from 'src/modules/users/users.service';
@@ -45,9 +44,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
       );
     }
 
-    const id = new Types.ObjectId(payload.sub);
-
-    const user = await this.usersService.findUserById(id);
+    const user = await this.usersService.findUserById(payload.sub);
 
     if (!user) {
       throw new NotFoundException('User not found.');
