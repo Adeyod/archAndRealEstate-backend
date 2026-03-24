@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { generateRefCode } from 'src/common/utils/helper';
 import { GetAllUsersDto } from '../dto/get-all-users.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
 import { Role, User, UserDocument } from '../schemas/user.schema';
@@ -77,9 +78,37 @@ export class UsersRepository {
     });
   }
 
-  async create(data: Partial<User>) {
+  // async create(data: Partial<User>) {
+  //   const user = new this.userModel(data);
+  //   await user.save();
+  //   return user;
+  // }
+
+  async generateRefCode(): Promise<string> {
+    let refCode: string;
+    let exists = true;
+
+    do {
+      const code = generateRefCode();
+      refCode = code;
+      const existing = await this.userModel.exists({
+        referralCode: refCode.trim().toLowerCase(),
+      });
+      exists = !!existing;
+    } while (exists);
+
+    return refCode;
+  }
+  async create(data: Partial<User>): Promise<UserDocument> {
+    const refCode = await this.generateRefCode();
+
+    data.referralCode = refCode;
+
     const user = new this.userModel(data);
     await user.save();
+
+    console.log('refCode:', refCode);
+    console.log('Created user:', user);
     return user;
   }
 

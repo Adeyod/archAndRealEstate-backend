@@ -17,6 +17,8 @@ import { RefreshTokensService } from '../refresh-tokens/refresh-tokens.service';
 import { TokensRepository } from '../tokens/repositories/tokens.repository';
 import { TokenPurpose } from '../tokens/schemas/token.schema';
 import { UsersRepository } from '../users/repositories/users.repository';
+import { WalletResponseDto } from '../wallets/dto/wallet-response.dto';
+import { WalletsRepository } from '../wallets/repositories/wallets.repository';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
@@ -36,6 +38,7 @@ export class AuthService {
     private tokensRepository: TokensRepository,
     private mailService: MailService,
     private refreshTokensService: RefreshTokensService,
+    private walletsRepository: WalletsRepository,
   ) {}
   async registerUser(registerUserDto: RegisterUserDto) {
     const { firstName, lastName, email, password, phoneNumber } =
@@ -71,6 +74,16 @@ export class AuthService {
       expiresAt: new Date(Date.now() + 15 * 60 * 1000),
     };
     const userToken = await this.tokensRepository.create(input);
+
+    const findWallet = await this.walletsRepository.findWalletByUserId(
+      newUser._id.toString(),
+    );
+
+    if (!findWallet) {
+      const newWallet = await this.walletsRepository.createWallet(
+        newUser._id.toString(),
+      );
+    }
 
     // await this.mailService.sendVerificationEmail(
     //   newUser.email,
@@ -196,11 +209,53 @@ export class AuthService {
       const accessToken = await this.generateAccessTokens(user.email, user._id);
       console.log('accessToken:', accessToken);
 
-      return {
-        refreshToken: refreshToken.refreshToken,
-        accessToken,
-        user,
-      };
+      let userWallet: WalletResponseDto | null;
+
+      userWallet = await this.walletsRepository.findWalletByUserId(
+        user._id.toString(),
+      );
+
+      if (!userWallet) {
+        userWallet = await this.walletsRepository.createWallet(
+          user._id.toString(),
+        );
+
+        console.log('newly generated wallet:', userWallet);
+      }
+
+      if (!user.referralCode) {
+        const referralCode = await this.usersRepository.generateRefCode();
+        const updateUser = await this.usersRepository.update(user._id, {
+          referralCode,
+        });
+
+        if (!updateUser) {
+          throw new BadRequestException({
+            message: 'Unable to add referral code to this user.',
+            success: false,
+            status: 400,
+          });
+        }
+        const { password, ...others } = updateUser.toObject();
+        return {
+          refreshToken: refreshToken.refreshToken,
+          accessToken,
+          user: {
+            userWallet,
+            ...others,
+          },
+        };
+      } else {
+        const { password, ...others } = user.toObject();
+        return {
+          refreshToken: refreshToken.refreshToken,
+          accessToken,
+          user: {
+            userWallet,
+            ...others,
+          },
+        };
+      }
     }
   }
 
