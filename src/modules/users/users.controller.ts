@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { GetAllUsersDto } from './dto/get-all-users.dto';
+import { QueryWithPaginationDto } from '../../common/dto/query-with-pagination';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -11,7 +11,7 @@ export class UsersController {
   }
 
   @Get('get-all-users')
-  async findAllUsers(@Query() getAllUsersDto: GetAllUsersDto) {
-    return await this.usersService.findAllUsers(getAllUsersDto);
+  async findAllUsers(@Query() queryWithPaginationDto: QueryWithPaginationDto) {
+    return await this.usersService.findAllUsers(queryWithPaginationDto);
   }
 }

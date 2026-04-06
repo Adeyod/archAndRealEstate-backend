@@ -11,7 +11,9 @@ export class TransactionsRepository {
     private transactionModel: Model<TransactionDocument>,
   ) {}
 
-  async createTransaction(transactionCreationDto: TransactionCreationDto) {
+  async createTransaction(
+    transactionCreationDto: TransactionCreationDto,
+  ): Promise<TransactionDocument> {
     const { walletId, amount, description, transactionType } =
       transactionCreationDto;
     const id = new Types.ObjectId(walletId);

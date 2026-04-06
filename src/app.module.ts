@@ -5,13 +5,20 @@ import { MongooseModule } from '@nestjs/mongoose';
 import Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CloudinaryModule } from './common/infrastructure/cloudinary/cloudinary.module';
 import configuration from './config/configuration';
+import { MailModule } from './mail/mail.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { LeadsModule } from './modules/leads/leads.module';
+import { MilestonesModule } from './modules/milestones/milestones.module';
+import { ProjectsModule } from './modules/projects/projects.module';
+import { RefreshTokensModule } from './modules/refresh-tokens/refresh-tokens.module';
+import { TokensModule } from './modules/tokens/tokens.module';
 import { UsersController } from './modules/users/users.controller';
 import { UsersModule } from './modules/users/users.module';
-import { TokensModule } from './modules/tokens/tokens.module';
-import { MailModule } from './mail/mail.module';
-import { RefreshTokensModule } from './modules/refresh-tokens/refresh-tokens.module';
+import { PropertiesModule } from './modules/properties/properties.module';
+import { SalesModule } from './modules/sales/sales.module';
+import { ReferralEarningsModule } from './modules/referral-earnings/referral-earnings.module';
 
 @Module({
   imports: [
@@ -50,6 +57,13 @@ import { RefreshTokensModule } from './modules/refresh-tokens/refresh-tokens.mod
     TokensModule,
     MailModule,
     RefreshTokensModule,
+    ProjectsModule,
+    CloudinaryModule,
+    LeadsModule,
+    MilestonesModule,
+    PropertiesModule,
+    SalesModule,
+    ReferralEarningsModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService],

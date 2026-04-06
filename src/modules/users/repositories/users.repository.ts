@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { generateRefCode } from 'src/common/utils/helper';
-import { GetAllUsersDto } from '../dto/get-all-users.dto';
+import { QueryWithPaginationDto } from '../../../common/dto/query-with-pagination';
+import { generateRefCode } from '../../../common/utils/helper';
 import { UserResponseDto } from '../dto/user-response.dto';
 import { Role, User, UserDocument } from '../schemas/user.schema';
 
@@ -14,12 +14,20 @@ export class UsersRepository {
     return this.userModel.findById(id);
   }
 
-  async findAll(getAllUsersDto: GetAllUsersDto): Promise<{
+  async findByRefCode(refCode: string): Promise<UserDocument | null> {
+    const user = await this.userModel.findOne({
+      referralCode: refCode.trim().toUpperCase(),
+    });
+
+    return user;
+  }
+
+  async findAll(queryWithPaginationDto: QueryWithPaginationDto): Promise<{
     userObj: UserResponseDto[];
     totalPages: number;
     totalCount: number;
   }> {
-    const { page, searchParams, limit } = getAllUsersDto;
+    const { page, searchParams, limit } = queryWithPaginationDto;
 
     let query = this.userModel.find({ role: Role.user });
 

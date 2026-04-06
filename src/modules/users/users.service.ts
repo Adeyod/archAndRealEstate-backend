@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { GetAllUsersDto } from './dto/get-all-users.dto';
+import { QueryWithPaginationDto } from '../../common/dto/query-with-pagination';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { User } from './schemas/user.schema';
@@ -101,11 +101,11 @@ export class UsersService {
     return others;
   }
 
-  async findAllUsers(getAllUsersDto: GetAllUsersDto): Promise<{
+  async findAllUsers(queryWithPaginationDto: QueryWithPaginationDto): Promise<{
     userObj: UserResponseDto[];
     totalPages: number;
     totalCount: number;
   }> {
-    return await this.usersRepository.findAll(getAllUsersDto);
+    return await this.usersRepository.findAll(queryWithPaginationDto);
   }
 }

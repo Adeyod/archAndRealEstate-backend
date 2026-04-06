@@ -7,7 +7,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Match } from 'src/common/decorators/match.decorator';
+import { Match } from '../../../common/decorators/match.decorator';
 
 export class RegisterUserDto {
   @ApiProperty({
@@ -17,7 +17,7 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail()
   @IsString({ message: 'Email must be a string' })
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'User first name',
@@ -26,7 +26,7 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'FIrst name is required.' })
   @IsString({ message: 'First name is a string' })
   @MinLength(2, { message: 'First name must be minimum of 2 characters long.' })
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({
     description: 'User last name',
@@ -35,7 +35,7 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'Last name is required.' })
   @IsString({ message: 'Last name is a string' })
   @MinLength(2, { message: 'Last name must be minimum of 2 characters long.' })
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({
     description: 'User phone number',
@@ -46,7 +46,7 @@ export class RegisterUserDto {
   @MinLength(11, {
     message: 'Phone number must be minimum of 11 characters long.',
   })
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @ApiProperty({ description: 'User password', example: 'StrongP@ssword1' })
   @IsNotEmpty({ message: 'Password is required.' })
@@ -59,7 +59,7 @@ export class RegisterUserDto {
     message:
       'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
   })
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'User confirm password',
@@ -68,5 +68,5 @@ export class RegisterUserDto {
   @Match('password', {
     message: 'Password and confirm password mush match',
   })
-  confirmPassword: string;
+  confirmPassword!: string;
 }

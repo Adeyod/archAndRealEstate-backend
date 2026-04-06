@@ -11,31 +11,34 @@ export enum Role {
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true, unique: true })
-  email: string;
+  email!: string;
 
   @Prop({ required: true })
-  password: string;
+  password!: string;
 
   @Prop({ required: false })
-  referralCode: string;
+  referralCode!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  referredBy: Types.ObjectId;
+  referredBy!: Types.ObjectId;
 
   @Prop({ type: String, enum: Role, default: Role.user })
-  role: Role;
+  role!: Role;
 
   @Prop({ required: true })
-  firstName: string;
+  firstName!: string;
 
   @Prop({ required: true })
-  lastName: string;
+  lastName!: string;
 
   @Prop({ required: true })
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @Prop({ default: false })
-  isVerified: boolean;
+  isVerified!: boolean;
+
+  @Prop({ type: Types.ObjectId, ref: 'Lead' })
+  leadId!: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
